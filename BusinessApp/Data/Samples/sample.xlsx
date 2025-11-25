@@ -1,0 +1,11 @@
+The sample Excel file `sample.xlsx` will contain a simple structure with headers for payment records. Here is the content for the file:
+
+| Date       | Narration         | Amount |
+|------------|-------------------|--------|
+| 2023-10-01 | Payment for Invoice #123 | 100.00 |
+| 2023-10-02 | Payment for Invoice #124 | 150.00 |
+| 2023-10-03 | Payment for Invoice #125 | 200.00 |
+| 2023-10-04 | Payment for Invoice #126 | 250.00 |
+| 2023-10-05 | Payment for Invoice #127 | 300.00 |
+
+This structure includes three columns: `Date`, `Narration`, and `Amount`, which will be used for validating payments against the extracted data from the scanned slips.

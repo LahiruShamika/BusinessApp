@@ -1,0 +1,9 @@
+D:\My Projects\BusinessApp\BusinessApp\obj\Debug\net10.0\rpswa.dswa.cache.json
+D:\My Projects\BusinessApp\BusinessApp\obj\Debug\net10.0\BusinessApp.GeneratedMSBuildEditorConfig.editorconfig
+D:\My Projects\BusinessApp\BusinessApp\obj\Debug\net10.0\BusinessApp.AssemblyInfoInputs.cache
+D:\My Projects\BusinessApp\BusinessApp\obj\Debug\net10.0\BusinessApp.AssemblyInfo.cs
+D:\My Projects\BusinessApp\BusinessApp\obj\Debug\net10.0\BusinessApp.csproj.CoreCompileInputs.cache
+D:\My Projects\BusinessApp\BusinessApp\obj\Debug\net10.0\BusinessApp.MvcApplicationPartsAssemblyInfo.cache
+D:\My Projects\BusinessApp\BusinessApp\obj\Debug\net10.0\BusinessApp.RazorAssemblyInfo.cache
+D:\My Projects\BusinessApp\BusinessApp\obj\Debug\net10.0\BusinessApp.RazorAssemblyInfo.cs
+D:\My Projects\BusinessApp\BusinessApp\obj\Debug\net10.0\BusinessApp.sourcelink.json

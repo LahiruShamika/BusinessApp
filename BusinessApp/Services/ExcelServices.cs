@@ -1,34 +1,47 @@
-using OfficeOpenXml;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using OfficeOpenXml;
+using BusinessApp.Models;
 
 namespace BusinessApp.Services
 {
-    public class ExcelService
+    public class ExcelServices
     {
-        public List<PaymentRecord> ExtractPaymentRecords(string filePath)
+        public ExcelServices()
         {
-            var paymentRecords = new List<PaymentRecord>();
+            // Required for EPPlus 5+ when used in noncommercial projects
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        }
 
-            using (var package = new ExcelPackage(new FileInfo(filePath)))
+        // Example: read payments from an Excel stream
+        public IEnumerable<PaymentRecord> ReadPayments(Stream excelStream)
+        {
+            var results = new List<PaymentRecord>();
+
+            using var package = new ExcelPackage(excelStream);
+            var ws = package.Workbook.Worksheets.Count > 0 ? package.Workbook.Worksheets[0] : null;
+            if (ws == null || ws.Dimension == null) return results;
+
+            int startRow = 2; // assume row 1 = headers
+            int endRow = ws.Dimension.End.Row;
+
+            for (int r = startRow; r <= endRow; r++)
             {
-                var worksheet = package.Workbook.Worksheets[0]; // Assuming data is in the first worksheet
-                var rowCount = worksheet.Dimension.Rows;
-
-                for (int row = 2; row <= rowCount; row++) // Assuming the first row contains headers
+                // Map columns to your PaymentRecord properties. Adjust indexes as needed.
+                var record = new PaymentRecord
                 {
-                    var paymentRecord = new PaymentRecord
-                    {
-                        Date = worksheet.Cells[row, 1].GetValue<DateTime>(), // Assuming date is in the first column
-                        Narration = worksheet.Cells[row, 2].GetValue<string>(), // Assuming narration is in the second column
-                        Amount = worksheet.Cells[row, 3].GetValue<decimal>() // Assuming amount is in the third column
-                    };
+                    // Example column mapping (change property names/types to match your model):
+                    // Date = DateTime.TryParse(ws.Cells[r, 1].Text, out var d) ? d : (DateTime?)null,
+                    // Narration = ws.Cells[r, 2].Text,
+                    // Amount = decimal.TryParse(ws.Cells[r, 3].Text, out var a) ? a : 0m
+                };
 
-                    paymentRecords.Add(paymentRecord);
-                }
+                // Only add if meaningful values present; adjust validation as needed
+                results.Add(record);
             }
 
-            return paymentRecords;
+            return results;
         }
     }
 }

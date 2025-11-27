@@ -1,0 +1,33 @@
+using System.Collections.Generic;
+using System.Linq;
+using PaymentReconciler.Models;
+
+namespace PaymentReconciler.Services
+{
+    public class PaymentComparer
+    {
+        public ComparisonResult ComparePayments(List<PaymentRecord> paymentRecords, List<OcrResult> ocrResults)
+        {
+            var comparisonResult = new ComparisonResult
+            {
+                Matches = new List<PaymentRecord>(),
+                Mismatches = new List<PaymentRecord>()
+            };
+
+            foreach (var payment in paymentRecords)
+            {
+                var match = ocrResults.FirstOrDefault(ocr => ocr.Amount == payment.Amount && ocr.Date == payment.Date);
+                if (match != null)
+                {
+                    comparisonResult.Matches.Add(payment);
+                }
+                else
+                {
+                    comparisonResult.Mismatches.Add(payment);
+                }
+            }
+
+            return comparisonResult;
+        }
+    }
+}

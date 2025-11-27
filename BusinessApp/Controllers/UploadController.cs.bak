@@ -1,0 +1,44 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using PaymentReconciler.Models;
+using PaymentReconciler.Services;
+using System.Threading.Tasks;
+
+namespace PaymentReconciler.Controllers
+{
+    public class UploadController : Controller
+    {
+        private readonly ExcelService _excelService;
+        private readonly OcrService _ocrService;
+        private readonly PaymentComparer _paymentComparer;
+
+        public UploadController(ExcelService excelService, OcrService ocrService, PaymentComparer paymentComparer)
+        {
+            _excelService = excelService;
+            _ocrService = ocrService;
+            _paymentComparer = paymentComparer;
+        }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadExcel(IFormFile excelFile, IFormFile paymentSlip)
+        {
+            if (excelFile == null || paymentSlip == null)
+            {
+                ModelState.AddModelError("", "Please upload both an Excel file and a payment slip.");
+                return View("Index");
+            }
+
+            var paymentRecords = await _excelService.ReadExcelFileAsync(excelFile);
+            var ocrResults = await _ocrService.ProcessPaymentSlipAsync(paymentSlip);
+            var comparisonResults = _paymentComparer.Compare(paymentRecords, ocrResults);
+
+            return View("Results", comparisonResults);
+        }
+    }
+}

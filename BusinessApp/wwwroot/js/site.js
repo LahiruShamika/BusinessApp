@@ -5,7 +5,7 @@
     uploadForm.addEventListener("submit", function(event) {
         event.preventDefault();
         const formData = new FormData(uploadForm);
-        
+
         fetch("/Upload/Process", {
             method: "POST",
             body: formData
@@ -20,25 +20,18 @@
     });
 
     function displayResults(data) {
-        resultContainer.innerHTML = "";
-        if (data.validPayments.length > 0) {
-            const validList = document.createElement("ul");
-            data.validPayments.forEach(payment => {
-                const listItem = document.createElement("li");
-                listItem.textContent = `Valid Payment: ${payment.narration} on ${payment.date}`;
-                validList.appendChild(listItem);
-            });
-            resultContainer.appendChild(validList);
-        }
+        resultContainer.innerHTML = ""; // Clear previous results
 
-        if (data.invalidPayments.length > 0) {
-            const invalidList = document.createElement("ul");
-            data.invalidPayments.forEach(payment => {
+        if (data.success) {
+            const resultsList = document.createElement("ul");
+            data.results.forEach(result => {
                 const listItem = document.createElement("li");
-                listItem.textContent = `Invalid Payment: ${payment.narration} on ${payment.date}`;
-                invalidList.appendChild(listItem);
+                listItem.textContent = `Payment ID: ${result.paymentId}, Status: ${result.status}`;
+                resultsList.appendChild(listItem);
             });
-            resultContainer.appendChild(invalidList);
+            resultContainer.appendChild(resultsList);
+        } else {
+            resultContainer.textContent = "No results found or an error occurred.";
         }
     }
 });

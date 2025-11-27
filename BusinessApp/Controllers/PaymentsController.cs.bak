@@ -1,0 +1,36 @@
+using Microsoft.AspNetCore.Mvc;
+using PaymentReconciler.Models;
+using PaymentReconciler.Services;
+using System.Threading.Tasks;
+
+namespace PaymentReconciler.Controllers
+{
+    public class PaymentsController : Controller
+    {
+        private readonly ExcelService _excelService;
+        private readonly OcrService _ocrService;
+        private readonly PaymentComparer _paymentComparer;
+
+        public PaymentsController(ExcelService excelService, OcrService ocrService, PaymentComparer paymentComparer)
+        {
+            _excelService = excelService;
+            _ocrService = ocrService;
+            _paymentComparer = paymentComparer;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ComparePayments(IFormFile excelFile, IFormFile ocrFile)
+        {
+            if (excelFile == null || ocrFile == null)
+            {
+                return BadRequest("Both files are required.");
+            }
+
+            var paymentRecords = await _excelService.ReadExcelFileAsync(excelFile);
+            var ocrResults = await _ocrService.ProcessOcrFileAsync(ocrFile);
+            var comparisonResult = _paymentComparer.Compare(paymentRecords, ocrResults);
+
+            return View("Results/Index", comparisonResult);
+        }
+    }
+}

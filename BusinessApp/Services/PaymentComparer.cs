@@ -1,40 +1,54 @@
-using System;
+// ...existing code...
 using System.Collections.Generic;
-using System.Linq;
 using BusinessApp.Models;
 
 namespace BusinessApp.Services
 {
     public class PaymentComparer
     {
-        public List<ValidationResult> ComparePayments(List<PaymentRecord> excelRecords, List<PaymentRecord> extractedRecords)
+        // Accept single OCR result (UploadController uses this)
+        public ComparisonResult Compare(List<PaymentRecord> paymentRecords, OcrResult ocrResult)
         {
-            var results = new List<ValidationResult>();
+            var list = new List<OcrResult>();
+            if (ocrResult != null) list.Add(ocrResult);
+            return Compare(paymentRecords, list);
+        }
 
-            foreach (var extracted in extractedRecords)
+        // Accept multiple OCR results (PaymentsController uses this)
+        public ComparisonResult Compare(List<PaymentRecord> paymentRecords, List<OcrResult> ocrResults)
+        {
+            var result = new ComparisonResult();
+
+            if (paymentRecords == null) return result;
+            ocrResults ??= new List<OcrResult>();
+
+            foreach (var record in paymentRecords)
             {
-                var matchingRecord = excelRecords.FirstOrDefault(record =>
-                    record.Date == extracted.Date && record.Narration == extracted.Narration);
+                bool matched = false;
 
-                if (matchingRecord != null)
+                foreach (var ocr in ocrResults)
                 {
-                    results.Add(new ValidationResult
+                    // simple matching: amount + same date (date comparison tolerant to day)
+                    var amountMatches = ocr?.Amount.HasValue == true && record.Amount == ocr!.Amount!.Value;
+                    var dateMatches = ocr?.Date.HasValue == true && record.Date.Date == ocr!.Date!.Value.Date;
+
+                    if (amountMatches && dateMatches)
                     {
-                        IsValid = true,
-                        ErrorMessage = string.Empty
-                    });
+                        // Add a matching item
+                        result.Matches.Add(new ComparisonItem(true, "Matched by amount and date", record, ocr));
+                        matched = true;
+                        break;
+                    }
                 }
-                else
+
+                if (!matched)
                 {
-                    results.Add(new ValidationResult
-                    {
-                        IsValid = false,
-                        ErrorMessage = $"Invalid payment: {extracted.Date} - {extracted.Narration}"
-                    });
+                    result.Mismatches.Add(new ComparisonItem(false, "No matching OCR found", record, null));
                 }
             }
 
-            return results;
+            return result;
         }
     }
 }
+// ...existing code...

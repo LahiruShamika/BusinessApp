@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Reconciler</title>
+    <link rel="stylesheet" href="~/css/site.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Payment Reconciler</h1>
+        <p>This application allows you to upload Excel files containing payment records and compare them with scanned payment slips.</p>
+        <div>
+            <a href="@Url.Action("Index", "Upload")" class="btn btn-primary">Upload Payment Records</a>
+            <a href="@Url.Action("Index", "Results")" class="btn btn-secondary">View Comparison Results</a>
+        </div>
+    </div>
+    <script src="~/js/site.js"></script>
+</body>
+</html>

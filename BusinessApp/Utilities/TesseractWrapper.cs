@@ -1,6 +1,6 @@
-using Tesseract;
 using System;
-using System.Drawing;
+using System.IO;
+using Tesseract;
 
 namespace BusinessApp.Utilities
 {
@@ -15,6 +15,11 @@ namespace BusinessApp.Utilities
 
         public string ExtractTextFromImage(string imagePath)
         {
+            if (!File.Exists(imagePath))
+            {
+                throw new FileNotFoundException("The specified image file does not exist.", imagePath);
+            }
+
             using (var engine = new TesseractEngine(_tessDataPath, "eng", EngineMode.Default))
             {
                 using (var img = Pix.LoadFromFile(imagePath))

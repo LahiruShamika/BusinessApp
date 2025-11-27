@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using BusinessApp.Models;
 using BusinessApp.Services;
+using System.Threading.Tasks;
 
 namespace BusinessApp.Controllers
 {
@@ -20,19 +20,18 @@ namespace BusinessApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ValidatePayments(IFormFile file)
+        public async Task<IActionResult> ComparePayments(IFormFile excelFile, IFormFile ocrFile)
         {
-            if (file == null || file.Length == 0)
+            if (excelFile == null || ocrFile == null)
             {
-                return BadRequest("No file uploaded.");
+                return BadRequest("Both files are required.");
             }
 
-            var paymentRecords = await _excelService.ExtractPaymentRecords(file);
-            var extractedData = await _ocrService.ProcessPaymentSlip();
+            var paymentRecords = await _excelService.ReadExcelFileAsync(excelFile);
+            var ocrResults = await _ocrService.ProcessOcrFileAsync(ocrFile);
+            var comparisonResult = _paymentComparer.Compare(paymentRecords, ocrResults);
 
-            var validationResults = _paymentComparer.ComparePayments(paymentRecords, extractedData);
-
-            return View("Results/Index", validationResults);
+            return View("Results/Index", comparisonResult);
         }
     }
 }

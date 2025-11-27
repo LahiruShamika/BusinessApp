@@ -1,22 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Upload Payments</title>
-    <link rel="stylesheet" href="~/css/site.css" />
-</head>
-<body>
-    <div class="container">
-        <h1>Upload Payment Records</h1>
-        <form asp-controller="Upload" asp-action="UploadFile" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="fileUpload">Select Excel File:</label>
-                <input type="file" id="fileUpload" name="fileUpload" accept=".xlsx" required />
-            </div>
-            <button type="submit" class="btn btn-primary">Upload</button>
-        </form>
+@{
+    ViewData["Title"] = "Upload Payment Data";
+}
+
+<h2>Upload Payment Data</h2>
+
+<form asp-controller="Upload" asp-action="UploadFile" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="excelFile">Upload Excel File:</label>
+        <input type="file" name="excelFile" id="excelFile" class="form-control" accept=".xls,.xlsx" required />
     </div>
-    <script src="~/js/site.js"></script>
-</body>
-</html>
+    <div class="form-group">
+        <label for="paymentSlip">Upload Payment Slip (Image):</label>
+        <input type="file" name="paymentSlip" id="paymentSlip" class="form-control" accept="image/*" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
+<div>
+    <a asp-controller="Results" asp-action="Index">View Comparison Results</a>
+</div>

@@ -1,7 +1,8 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
-using System.Threading.Tasks;
+using BusinessApp.Models;
 using BusinessApp.Services;
+using System.Threading.Tasks;
 
 namespace BusinessApp.Controllers
 {
@@ -9,11 +10,13 @@ namespace BusinessApp.Controllers
     {
         private readonly ExcelService _excelService;
         private readonly OcrService _ocrService;
+        private readonly PaymentComparer _paymentComparer;
 
-        public UploadController(ExcelService excelService, OcrService ocrService)
+        public UploadController(ExcelService excelService, OcrService ocrService, PaymentComparer paymentComparer)
         {
             _excelService = excelService;
             _ocrService = ocrService;
+            _paymentComparer = paymentComparer;
         }
 
         [HttpGet]
@@ -23,25 +26,19 @@ namespace BusinessApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadFile(IFormFile file)
+        public async Task<IActionResult> UploadExcel(IFormFile excelFile, IFormFile paymentSlip)
         {
-            if (file == null || file.Length == 0)
+            if (excelFile == null || paymentSlip == null)
             {
-                ModelState.AddModelError("File", "Please upload a valid file.");
+                ModelState.AddModelError("", "Please upload both an Excel file and a payment slip.");
                 return View("Index");
             }
 
-            var filePath = Path.Combine(Path.GetTempPath(), file.FileName);
+            var paymentRecords = await _excelService.ReadExcelFileAsync(excelFile);
+            var ocrResults = await _ocrService.ProcessPaymentSlipAsync(paymentSlip);
+            var comparisonResults = _paymentComparer.Compare(paymentRecords, ocrResults);
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-
-            var paymentRecords = _excelService.ReadPaymentRecords(filePath);
-            // Further processing can be done here, such as invoking OCR and comparing payments.
-
-            return RedirectToAction("Index", "Results"); // Redirect to results page after processing
+            return View("Results", comparisonResults);
         }
     }
 }

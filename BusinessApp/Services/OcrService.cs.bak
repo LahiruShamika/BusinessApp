@@ -1,0 +1,32 @@
+using System;
+using System.Threading.Tasks;
+using Tesseract;
+
+namespace PaymentReconciler.Services
+{
+    public class OcrService
+    {
+        private readonly string _tessDataPath;
+
+        public OcrService(string tessDataPath)
+        {
+            _tessDataPath = tessDataPath;
+        }
+
+        public async Task<OcrResult> ProcessImageAsync(string imagePath)
+        {
+            using var engine = new TesseractEngine(_tessDataPath, "eng", EngineMode.Default);
+            using var img = Pix.LoadFromFile(imagePath);
+            using var page = engine.Process(img);
+
+            var text = page.GetText();
+            var confidence = page.GetMeanConfidence();
+
+            return new OcrResult
+            {
+                ExtractedText = text,
+                Confidence = confidence
+            };
+        }
+    }
+}

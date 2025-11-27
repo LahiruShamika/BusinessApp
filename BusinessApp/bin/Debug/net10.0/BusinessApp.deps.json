@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v10.0": {
-      "PaymentReconciler/1.0.0": {
+      "BusinessApp/1.0.0": {
         "dependencies": {
           "EPPlus": "5.8.3",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "6.0.0",
@@ -15,7 +15,7 @@
           "Tesseract": "4.1.1"
         },
         "runtime": {
-          "PaymentReconciler.dll": {}
+          "BusinessApp.dll": {}
         }
       },
       "EPPlus/5.8.3": {
@@ -414,7 +414,7 @@
     }
   },
   "libraries": {
-    "PaymentReconciler/1.0.0": {
+    "BusinessApp/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

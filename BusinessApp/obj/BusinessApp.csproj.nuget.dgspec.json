@@ -8,7 +8,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "D:\\My Projects\\BusinessApp\\BusinessApp\\BusinessApp.csproj",
-        "projectName": "PaymentReconciler",
+        "projectName": "BusinessApp",
         "projectPath": "D:\\My Projects\\BusinessApp\\BusinessApp\\BusinessApp.csproj",
         "packagesPath": "C:\\Users\\lahir\\.nuget\\packages\\",
         "outputPath": "D:\\My Projects\\BusinessApp\\BusinessApp\\obj\\",
